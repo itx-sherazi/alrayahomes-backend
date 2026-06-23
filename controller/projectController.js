@@ -10,7 +10,18 @@ const getProjects = async (req, res) => {
 
     const query = { status: "active" };
 
-    if (category) query.category = category;
+    if (category) {
+      // Support filtering by category slug or ObjectId
+      const mongoose = require("mongoose");
+      if (mongoose.Types.ObjectId.isValid(category)) {
+        query.category = category;
+      } else {
+        const Category = require("../model/Category");
+        const cat = await Category.findOne({ slug: category });
+        if (cat) query.category = cat._id;
+        else query.category = null; // no match
+      }
+    }
     if (type) query.type = type;
     if (city) query["location.city"] = { $regex: city, $options: "i" };
     if (featured === "true") query.featured = true;
@@ -33,7 +44,7 @@ const getProjects = async (req, res) => {
 
     const projects = await Project.find(query)
       .populate("category", "name slug icon")
-      .select("-floorPlans -paymentPlans -amenities")
+      .select("-floorPlans")
       .sort(sort)
       .skip(skip)
       .limit(Number(limit));
