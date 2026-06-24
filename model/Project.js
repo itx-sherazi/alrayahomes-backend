@@ -11,13 +11,6 @@ const floorPlanSchema = new mongoose.Schema({
   area: { type: String },
 });
 
-const paymentPlanSchema = new mongoose.Schema({
-  title: { type: String, required: true },
-  downPayment: { type: String },
-  installment: { type: String },
-  duration: { type: String },
-  note: { type: String },
-});
 
 const projectSchema = new mongoose.Schema(
   {
@@ -75,7 +68,6 @@ const projectSchema = new mongoose.Schema(
     ],
     floorPlans: [floorPlanSchema],
     amenities: [{ type: String }],
-    paymentPlans: [paymentPlanSchema],
     features: [{ type: String }],
     status: {
       type: String,
